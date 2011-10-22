@@ -7,7 +7,7 @@ local tostring     = tostring
 
 --- <p>Unterklasse der Klasse
 --   <a href="/modules/ml.char.html">ml.char</a></p>
---   Mit Hilfe dieser Klasse k&ouml;nnen Objekte der Klasse
+--   Mit Hilfe dieser Klasse werden Objekte der Klasse
 --   <code>source</code>, s. Paket <code>gr_source</code> in
 --   Zeichenketten des ISO-10646-Zeichensatzes umgewandelt.
 --   Dabei werden entitys wie &quot;&amp;auml;&quot;, &quot;&amp;#x...&quot;;
