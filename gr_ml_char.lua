@@ -46,12 +46,20 @@ function new(self, source, opt)
  return ret
 end
 
+--- <p>Handler f&uuml;r ein einzelnes mb des ISO-10646-Zeichensatzes.</p>
+--   Der Programmierer mu&szlig; diese Methode entsprechend
+--   &uuml;berladen.
+--  @param mb ein mb des ISO-10646-Zeichensatzes in Form einer
+--   Zeichenkette
+function handle_flow(self, mb)
+end
+
 --- <p>Handler</p>
+--   Der Programmierer mu&szlig; diese Methode entsprechend
+--   &uuml;berladen.
 --  @param nr 32bit-Integerwert, der Position eines Zeichens im
 --   ISO-10646-Zeichenvorrat angibt.  Dieses Zeichen wird der
 --   Methode <code>ml.char.handle_flow</code> &uuml;bergeben.
---   Der Programmierer mu&szlig; diese Methode entsprechend
---   &uuml;berladen.
 function handle_char(self, nr)
  local n = nr
  local accu = ""
@@ -65,10 +73,10 @@ function handle_char(self, nr)
 end
 
 --- <p>Handler</p>
---  @param tok entity-Bezeichner wie "auml", wie sie in
---   SGML/HTML/XML-Dokumenten als entitys wie &amp;auml; vorkommen.
 --   <code>ml.char.handle_remaining_entity</code> mu&szlig; ggf.
 --   der Programmierer &uuml;berladen.
+--  @param tok entity-Bezeichner wie "auml", wie sie in
+--   SGML/HTML/XML-Dokumenten als entitys wie &amp;auml; vorkommen.
 function handle_remaining_entity(self, tok)
  if     (tok == "nbsp")
  then   self:handle_char(160)
@@ -652,7 +660,7 @@ end
 --  @param (optional) Objekt der Klasse <code>source</code> aus dem Paket
 --   <code>gr_source</code>.  Dieses Objekt mu&szlig; wc auswerfen
 --   vom Typ <code>gr_unicode_wc</code>, s. Paket <code>gr_unicode</code>
---   Wird dieser Parameter nicht angegen, gilt <code>source = self</code>.
+--   Wird dieser Parameter nicht angegeben, gilt <code>source = self</code>.
 --  @return eine der folgenden Zeichenketten
 --   <ul>
 --    <li><code>"stop"</code>es gibt keine Zeichen mehr, die der Acceptor

@@ -49,7 +49,6 @@ end
 function new(self, source, opt)
  local ret = ml.char.new(self, source, opt)
  ret.accu  = ""
- setmetatable(ret, { __index = self })
  return ret
 end
 
