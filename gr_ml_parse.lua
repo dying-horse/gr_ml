@@ -45,6 +45,9 @@ function handle_cdata(self, str)
 end
 
 --- <p>Zum &Uuml;berladen bestimmter Handler f&uuml;r starttags</p>
+--  <p>Man beachte bitte, da&szlig; f&uuml;r die Tags <code>script</code>
+--   und <code>style</code> notwendig sind.  Beim &Uuml;berladen
+--   sollte diese Methode von der Unterklasse aus aufgerufen werden.</p>
 --  @param tag der tag in Kleinbuchstaben als Zeichenkette
 --  @param attrs table mit Attributen als Schl&uuml;ssel in Form
 --   von Zeichenketten und den diesen Attributen zugewiesenen Werten
@@ -56,8 +59,11 @@ function handle_starttag(self, tag, attrs)
  end
 end
 
---- <p>Zum &Uuml;berladen bestimmter Handler f&uuml;r stoptags
---  @param tag der tag in Kleinbuchstaben als Zeichenkette</p>
+--- <p>Zum &Uuml;berladen bestimmter Handler f&uuml;r stoptags</p>
+--  <p>Man beachte bitte, da&szlig; f&uuml;r die Tags <code>script</code>
+--   und <code>style</code> notwendig sind.  Beim &Uuml;berladen
+--   sollte diese Methode von der Unterklasse aus aufgerufen werden.</p>
+--  @param tag der tag in Kleinbuchstaben als Zeichenkette
 function handle_stoptag(self, tag)
  if     (tag == "script" or tag == "style")
  then   self.isspecial = false

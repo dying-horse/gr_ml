@@ -47,16 +47,18 @@ function new(self, source, opt)
 end
 
 --- <p>Handler f&uuml;r ein einzelnes mb des ISO-10646-Zeichensatzes.</p>
---   Der Programmierer mu&szlig; diese Methode entsprechend
---   &uuml;berladen.
+--  <p>Der Programmierer mu&szlig; diese Methode entsprechend
+--   &uuml;berladen.</p>
 --  @param mb ein mb des ISO-10646-Zeichensatzes in Form einer
 --   Zeichenkette
 function handle_flow(self, mb)
 end
 
 --- <p>Handler</p>
---   Der Programmierer mu&szlig; diese Methode entsprechend
---   &uuml;berladen.
+--  <p>Der Programmierer mu&szlig; diese Methode entsprechend
+--   &uuml;berladen.</p>
+--  <p>Mit Bedacht &uuml;berladen!  Zur Sicherheit lieber
+--   <code>ml.char.handle_flow</code> &uuml;berladen!</p>
 --  @param nr 32bit-Integerwert, der Position eines Zeichens im
 --   ISO-10646-Zeichenvorrat angibt.  Dieses Zeichen wird der
 --   Methode <code>ml.char.handle_flow</code> &uuml;bergeben.
