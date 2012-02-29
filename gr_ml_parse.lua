@@ -19,65 +19,73 @@ isspecial = false
 --- <p>Zum &Uuml;berladen bestimmter Handler f&uuml;r decls, also
 --  so etwas: &quot;&lt;!...&gt;&quot;</p>
 --  @param str der Text zwischen &quot;&lt;!&quot; und
---   &quot;&gt;&quot;
+--   &quot;&gt;&quot; als ASCII-Zeichenkette
 function handle_decl(self, str)
 end
 
 --- <p>Zum &Uuml;berladen bestimmter Handler f&uuml;r Kommentare, also
 --  so etwas: &quot;&lt;!--...--&gt;&quot;</p>
 --  @param str der Text zwischen &quot;&lt;!--&quot; und
---   &quot;--&gt;&quot;
+--   &quot;--&gt;&quot; als ASCII-Zeichenkette
 function handle_comment(self, str)
 end
 
 --- <p>Zum &Uuml;berladen bestimmter Handler f&uuml;r pis, also
 --  so etwas: &quot;&lt;?...&gt;&quot;</p>
 --  @param str der Text zwischen &quot;&lt;?&quot; und
---   &quot;&gt;&quot;
+--   &quot;?&gt;&quot; als ASCII-Zeichenkette
 function handle_pi(self, str)
 end
 
 --- <p>Zum &Uuml;berladen bestimmter Handler f&uuml;r cdatas, also
 --  so etwas: &quot;&lt;![CDATA[...]]&gt;&quot;</p>
 --  @param str der Text zwischen &quot;&lt;![CDATA[&quot; und
---   &quot;]]&gt;&quot;
+--   &quot;]]&gt;&quot; als ASCII-Zeichenkette
 function handle_cdata(self, str)
 end
-
---- <p>Zum &Uuml;berladen bestimmter Handler f&uuml;r starttags</p>
---  <p>Man beachte bitte, da&szlig; f&uuml;r die Tags <code>script</code>
---   und <code>style</code> notwendig sind.  Beim &Uuml;berladen
---   sollte diese Methode von der Unterklasse aus aufgerufen werden.</p>
---  @param tag der tag in Kleinbuchstaben als Zeichenkette
---  @param attrs table mit Attributen als Schl&uuml;ssel in Form
---   von Zeichenketten und den diesen Attributen zugewiesenen Werten
---   als zu diesen Schl&uuml;sseln eingetragene Werte in Form von
---   Zeichenketten
-function handle_starttag(self, tag, attrs)
+ 
+--- <p>Zum &Uuml;berladen bestimmter Handler f&uuml;r die
+--   Sonderbehandlung der Elemente <code>script</code> und
+--   <code>style</code> im starttag</p>
+--  @param tag der tag in Kleinbuchstaben als ASCII-Zeichenkette
+function handle_pre_starttag(self, tag)
  if     (tag == "script" or tag == "style")
  then   self.isspecial = true
  end
 end
 
---- <p>Zum &Uuml;berladen bestimmter Handler f&uuml;r stoptags</p>
---  <p>Man beachte bitte, da&szlig; f&uuml;r die Tags <code>script</code>
---   und <code>style</code> notwendig sind.  Beim &Uuml;berladen
---   sollte diese Methode von der Unterklasse aus aufgerufen werden.</p>
---  @param tag der tag in Kleinbuchstaben als Zeichenkette
-function handle_stoptag(self, tag)
+--- <p>Zum &Uuml;berladen bestimmter Handler f&uuml;r starttags</p>
+--  @param tag der tag in Kleinbuchstaben als ASCII-Zeichenkette
+--  @param attrs table mit Attributen als Schl&uuml;ssel in Form
+--   von ASCII-Zeichenketten und den diesen Attributen zugewiesenen Werten
+--   als zu diesen Schl&uuml;sseln eingetragene Werte in Form von
+--   ISO-10646-Zeichenketten
+function handle_starttag(self, tag, attrs)
+end
+
+--- <p>Zum &Uuml;berladen bestimmter Handler f&uuml;r die
+--   Sonderbehandlung der Elemente <code>script</code> und
+--   <code>style</code> im stoptag</p>
+--  @param tag der tag in Kleinbuchstaben als ASCII-Zeichenkette
+function handle_pre_stoptag(self, tag)
  if     (tag == "script" or tag == "style")
  then   self.isspecial = false
  end
 end
 
+--- <p>Zum &Uuml;berladen bestimmter Handler f&uuml;r stoptags</p>
+--  @param tag der tag in Kleinbuchstaben als ASCII-Zeichenkette
+function handle_stoptag(self, tag)
+end
+
 --- <p>Zum &Uuml;berladen bestimmter Handler f&uuml;r startstoptags,
 --  also mit stoptags kombinierte starttags, wie sie in XML
 --  &uuml;blich sind</p>
---  @param tag der tag in Kleinbuchstaben als Zeichenkette
+--  @param tag der tag in Kleinbuchstaben als ASCII-Zeichenkette
 --  @param attrs table mit Attributen als Schl&uuml;ssel in Form
---   von Zeichenketten und den diesen Attributen zugewiesenen Werten
+--   von ASCII-Zeichenketten und den diesen Attributen zugewiesenen Werten
 --   als zu diesen Schl&uuml;sseln eingetragene Werte in Form von
---   Zeichenketten
+--   ISO-10646-Zeichenketten
 function handle_startstoptag(self, tag, attrs)
  self:handle_starttag(tag, attrs)
  self:handle_stoptag(tag)
@@ -253,7 +261,8 @@ function starttag(self)
 
 -- Hier gilt das gleiche.
        if     (self:cur() == unicode.towc('>'))
-       then   self:handle_starttag(tag, attrs)
+       then   self:handle_pre_starttag(tag)
+              self:handle_starttag(tag, attrs)
               return self:next()
        end
 
@@ -306,7 +315,7 @@ function markup_mode(self)
                self:feed_flow("?")
                return "special"
         end
-        ret, accu = self:stopped_str('>')
+        ret, accu = self:stopped_str('?>')
         if (ret == "unclosed")
         then   return "unclosed"
         end
@@ -323,6 +332,7 @@ function markup_mode(self)
         if     (ret == "stop")
         then   return "unclosed"
         end
+        self:handle_pre_stoptag(accu)
         self:handle_stoptag(accu)
         ret, accu = self:stopped_str('>')
         return ret
