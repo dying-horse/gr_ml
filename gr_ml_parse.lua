@@ -14,7 +14,18 @@ local unicode        = unicode
 module "ml.parse"
 
 
-isspecial = false
+--- <p>Befinden wir uns im Text in einem <code>script</code> oder
+--   <code>style</code>-Element?
+--  @return boolean
+function isspecial(self)
+ return self.special
+end
+
+function new(self, source, opt)
+ local instance = ml.char.new(self, source, opt)
+ instance.special = false
+ return instance
+end 
 
 --- <p>Zum &Uuml;berladen bestimmter Handler f&uuml;r decls, also
 --  so etwas: &quot;&lt;!...&gt;&quot;</p>
@@ -50,7 +61,7 @@ end
 --  @param tag der tag in Kleinbuchstaben als ASCII-Zeichenkette
 function handle_pre_starttag(self, tag)
  if     (tag == "script" or tag == "style")
- then   self.isspecial = true
+ then   self.special = true
  end
 end
 
@@ -69,7 +80,7 @@ end
 --  @param tag der tag in Kleinbuchstaben als ASCII-Zeichenkette
 function handle_pre_stoptag(self, tag)
  if     (tag == "script" or tag == "style")
- then   self.isspecial = false
+ then   self.special = false
  end
 end
 
@@ -160,7 +171,7 @@ end
 
 --- <p>Soll nicht direkt vom Programmierer aufgerufen werden.</p>
 function char_or_ent(self)
- if    (self.isspecial)
+ if    (self.special)
  then  return "no"
  end
 
@@ -310,7 +321,7 @@ function markup_mode(self)
  then   return "unclosed"
  elseif (ret == "go")
  then   -- <?
-        if     (self.isspecial)
+        if     (self.special)
         then   self:feed_flow("<")
                self:feed_flow("?")
                return "special"
@@ -343,7 +354,7 @@ function markup_mode(self)
  then   return "unclosed"
  elseif (ret == "go")
  then   -- <!
-        if     (self.isspecial)
+        if     (self.special)
         then   self:feed_flow("<")
                self:feed_flow("!")
                return "special"
@@ -353,7 +364,7 @@ function markup_mode(self)
 
  -- < .
 
- if    (self.isspecial)
+ if    (self.special)
  then  self:feed_flow("<")
        return "special"
  end
